@@ -41,6 +41,7 @@ asdf install
 
 ```bash
 cd sample_app
+mix setup
 mix phx.server
 ```
 
@@ -59,8 +60,7 @@ macOS や Windows で無償利用したい場合は [Rancher Desktop][rd] の利
 ローカル実行時の `deps` や `_build` を削除する
 
 ```bash
-rm -rf sample_app/deps
-rm -rf sample_app/_build
+rm -rf deps _build
 ```
 
 ### コンテナの起動
@@ -250,16 +250,17 @@ Recommended follow-up action:
   - You can access your service at http://sampl-Publi-xxx-1316580721.ap-northeast-1.elb.amazonaws.com over the internet.
 ```
 
-### リソースの調節
+### リソースの変更
 
 copilot/lb-svc/manifest.yml の `cpu` と `memory` を変更することで、
-コンテナに割り当てるリソースを調整することができる
+コンテナに割り当てるリソース、コンテナの台数を調整することができる
 
 [ただし、設定できる値の組み合わせには制限がある][resource]
 
 ```yml
-cpu: 512       # Number of CPU units for the task.
-memory: 1024    # Amount of memory in MiB used by the task.
+cpu: 256       # Number of CPU units for the task.
+memory: 512    # Amount of memory in MiB used by the task.
+count: 1       # Number of tasks that should be running in your service.
 ```
 
 ### アプリケーションの削除
