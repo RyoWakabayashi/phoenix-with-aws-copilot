@@ -1,0 +1,48 @@
+FROM elixir:1.13.4-alpine AS build
+
+ARG SECRET_KEY_BASE
+
+ENV MIX_ENV="prod"
+
+RUN apk add --no-cache build-base git npm python3
+
+RUN mix local.hex --force && \
+  mix local.rebar --force
+
+COPY ./sample_app /app
+
+WORKDIR /app
+
+ENV SECRET_KEY_BASE=${SECRET_KEY_BASE}
+
+RUN mix deps.get --only prod
+
+RUN mix assets.deploy
+
+RUN mix phx.gen.release
+
+RUN mix release
+
+FROM alpine:3.15.4 AS app
+
+ARG SECRET_KEY_BASE
+
+ENV MIX_ENV="prod"
+
+ENV PHX_SERVER=true
+
+ENV SECRET_KEY_BASE=${SECRET_KEY_BASE}
+
+RUN apk add --no-cache openssl ncurses-libs curl jq libstdc++
+
+WORKDIR /app
+
+RUN chown nobody:nobody /app
+
+USER nobody:nobody
+
+COPY --from=build --chown=nobody:nobody /app/_build/${MIX_ENV}/rel/sample_app ./
+
+ENV HOME=/app
+
+CMD ["bin/sample_app", "start"]

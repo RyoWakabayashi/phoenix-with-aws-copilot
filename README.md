@@ -120,6 +120,16 @@ docker compose up
 
 <http://localhost:4000> にアクセスする
 
+### Docker でリリースを動かす
+
+```bash
+docker compose \
+  -f docker-compose.release.yml up \
+  --build
+```
+
+<http://localhost:4000> にアクセスする
+
 ## AWS 上で動かす
 
 ### AWS へのデプロイに必要なアプリケーション
