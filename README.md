@@ -34,6 +34,7 @@ mix phx.new sample_app --no-ecto
 
 ```bash
 asdf plugin add elixir
+asdf plugin add erlang
 asdf install
 ```
 
@@ -46,6 +47,54 @@ mix phx.server
 ```
 
 <http://localhost:4000> にアクセスする
+
+## ローカルでリリースを動かす
+
+依存パッケージのインストール
+
+```bash
+cd sample_app
+mix deps.get --only prod
+```
+
+SECRET_KEY_BASE の生成
+
+```bash
+MIX_ENV=prod mix phx.gen.secret
+...
+6PDDFp0vVWtBgdvhHgNUlcn8wYk+1TyClLPytrPj8MqZuYdUnLD4xhjAK0fBYxxx
+```
+
+最終行に表示された値を SECRET_KEY_BASE に設定する
+
+```bash
+export SECRET_KEY_BASE=6PDDFp0vVWtBgdvhHgNUlcn8wYk+1TyClLPytrPj8MqZuYdUnLD4xhjAK0fBYxxx
+```
+
+フロントエンドのビルド
+
+```bash
+MIX_ENV=prod mix assets.deploy
+```
+
+リリースの生成
+
+```bash
+MIX_ENV=prod mix phx.gen.release
+MIX_ENV=prod mix release
+```
+
+Phoenix を起動する
+
+```bash
+_build/dev/rel/sample_app/bin/server
+```
+
+もしくは以下のコマンドでも起動可能
+
+```bash
+PHX_SERVER=true _build/prod/rel/sample_app/bin/sample_app start
+```
 
 ## Docker で動かす
 
